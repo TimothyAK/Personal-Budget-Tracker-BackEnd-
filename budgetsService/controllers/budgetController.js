@@ -129,6 +129,27 @@ const budgetController = {
         } catch (err) {
             res.status(err.code).end(err.message)
         }
+    },
+    getBudgetperMnYbyUserId: async (req, res) => {
+        const { userID, month, year } = req.body
+
+        if (
+            isNaN(userID) || userID <= 0 || 
+            typeof month !== 'number' || month < 1 || month > 12 ||
+            typeof year !== 'number' || year < 2000
+        ) {
+            res.status(400).end("Invalid request body");
+            return;
+        }
+
+        try {
+            const budget = await budgetService.getBudgetPerMnYbyUserId(userID, month, year)
+
+            res.send(budget)
+            res.status(200).end()
+        } catch (err) {
+            res.status(err.code).end(err.message)
+        }
     }
 }
 
