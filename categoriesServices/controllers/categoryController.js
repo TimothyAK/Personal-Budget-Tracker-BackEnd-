@@ -24,15 +24,21 @@ const categoryController = {
         }
     },
     getCategoryById: async (req, res) => {
-        const categoryID = req.params.categoryID;
+        const userID = req.params.userID;
+        const { categoryID } = req.body;
+
+        if (isNaN(userID) || userID <= 0) {
+            res.status(400).end("Invalid user ID");
+            return;
+        }
 
         if (isNaN(categoryID) || categoryID <= 0) {
             res.status(400).end("Invalid category ID");
             return;
         }
-
+        
         try {
-            const category = await categoryService.getCategoryById(categoryID);
+            const category = await categoryService.getCategoryById(userID, categoryID);
 
             res.send(category);
             res.status(200).end();
