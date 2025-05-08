@@ -38,6 +38,26 @@ const expenseServices = {
             error.code = 500
             throw error
         }
+    },
+    updateExpense: async (expenseID, updateData) => {
+        try {
+            const existingExpense = await expenseDAO.findById(expenseID);
+            if(!existingExpense) {
+                const error = new Error("Expense not found")
+                error.code = 404
+                throw error
+            }
+
+            updateData.userID = existingExpense.dataValues.userID
+            updateData.categoryID = existingExpense.dataValues.categoryID
+
+            return await expenseDAO.update(expenseID, updateData)
+        } catch (err) {
+            if (err.code === 404) throw err
+            const error = new Error("Internal server error")
+            error.code = 500
+            throw error
+        }
     }
 }
 
