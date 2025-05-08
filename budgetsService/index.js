@@ -5,6 +5,6 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/api', budgetRouter);
+app.use('/api/budget', budgetRouter);
 
 app.listen(3001, () => console.log('Service running in port 3001'));
