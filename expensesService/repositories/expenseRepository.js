@@ -23,13 +23,8 @@ const expenseDAO = {
         return await expense.update(updateData);
     },
 
-    delete: async (userID, expenseID) => {
-        const expense = await Expenses.findOne({
-            where: {
-                userID: userID,
-                expenseID: expenseID
-            }
-        });
+    delete: async (expenseID) => {
+        const expense = await Expenses.findByPk(expenseID)
         if (!expense) return null;
         await expense.destroy();
         return true;
