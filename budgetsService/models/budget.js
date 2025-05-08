@@ -41,8 +41,7 @@ const tableConfig = {
     timestamps: false
 }
 
-const Budgets = sequelize.define("budgets", budgetDataTypes, tableConfig);  
-Budgets.belongsTo("")
+const Budgets = sequelize.define("budgets", budgetDataTypes, tableConfig);
 
 sequelize.sync();
 
