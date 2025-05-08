@@ -14,7 +14,7 @@ const userController = {
         }
 
         try {
-            const newUser = userService.signUp({
+            const newUser = await userService.signUp({
                 username, password, email
             })
     

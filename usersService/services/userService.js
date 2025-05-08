@@ -5,19 +5,19 @@ const SALT_ROUNDS = 10;
 
 const userService = {
     signUp: async ({ username, email, password }) => {
-        const existingUsers = await userDAO.findAll();
-        const usernameExists = existingUsers.find(u => u.username === username);
-        const emailExists = existingUsers.find(u => u.email === email);
-
-        if (usernameExists || emailExists) {
-            const error = new Error('Username or email already in use');
-            error.code = 400;
-            throw error;
-        }
-
-        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
         try {
+            const existingUsers = await userDAO.findAll();
+            const usernameExists = existingUsers.find(u => u.username === username);
+            const emailExists = existingUsers.find(u => u.email === email);
+
+            if (usernameExists || emailExists) {
+                const error = new Error('Username or email already in use');
+                error.code = 400;
+                throw error;
+            }
+
+            const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
             return await userDAO.create({ username, email, password: hashedPassword });
         } catch (err) {
             if(err.code === 400) throw err;
