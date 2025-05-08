@@ -105,31 +105,21 @@ const budgetServices = {
 
     checkBudgetExpense: async (userID, month, year) => {
         try {
-            const expenses_response = await axios.get(`http://localhost:3003/api/expense/user/${userID}`)
-            const expenses = Array.from(expenses_response.data)
-            const expenseAmounts = expenses
-                .filter(expense => {
-                    const expDate = new Date(expense.date);
-                    return expDate.getMonth() + 1 === month && expDate.getFullYear() === year;
-                })
-                .map(expense => parseFloat(expense.amount))
-
-            let expenseAvg = 0;
-            for(let amounts of expenseAmounts) {
-                expenseAvg += amounts / expenses.length
-            }
+            const expenses_sum_response = await axios.post(`http://localhost:3003/api/expense/sum`, {
+                userID, month, year
+            })
+            const expenses_sum = expenses_sum_response.data
 
             const budgets = await budgetDAO.findByUserId(userID)
             const bF = budgets
                 .filter(budget => budget.month === month && budget.year === year)
                 .map(budget => parseFloat(budget.dataValues.amount))
 
-            const expBudRatio = expenseAvg / bF[0]
+            console.log(expenses_sum, bF[0])
+        
+            const expBudRatio = expenses_sum / bF[0]
 
-            if(expBudRatio >= 0.8) {
-                return true;
-            }
-            return false;
+            return expBudRatio;
         } catch (err) {
             console.log(err.message)
 
