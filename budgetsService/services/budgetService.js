@@ -3,7 +3,23 @@ const budgetDAO = require("../repositories/budgetRepository")
 
 const budgetServices = {
     createBudget: async ({ userID, amount, month, year }) => {
-        return await budgetDAO.create({ userID, amount, month, year })
+        try {
+            const budgets = await budgetDAO.findByUserId(userID)
+            for(let budget of budgets) {
+                if (budget.month === month && budget.year === year) {
+                    const error = new Error('Budget already exists for this month and year');
+                    error.code = 409;
+                    throw error;
+                }
+            }
+
+            return await budgetDAO.create({ userID, amount, month, year })
+        } catch (err) {
+            if(err.code === 409) throw err;
+            const error = new Error('Internal server error');
+            error.code = 500;
+            throw error;
+        }
     },
 
     getBudgetById: async (budgetID) => {
