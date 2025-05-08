@@ -7,6 +7,7 @@ router.get("/user/:userID/:page", budgetController.getBudgetByUserId);
 router.get("/:budgetID", budgetController.getBudgetById);
 router.post("", budgetController.createBudget);
 router.post("/check", budgetController.checkBudgetExpense);
+router.post("/mny", budgetController.getBudgetperMnYbyUserId);
 router.put("/:budgetID", budgetController.updateBudget);
 router.delete("/:budgetID", budgetController.deleteBudget);
 

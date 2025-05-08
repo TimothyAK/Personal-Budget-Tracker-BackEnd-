@@ -125,6 +125,26 @@ const budgetServices = {
             error.code = 500
             throw error
         }
+    },
+
+    getBudgetPerMnYbyUserId: async (userID, month, year) => {
+        try {
+            const budgets = await budgetDAO.findByUserId(userID)
+            const filteredBudgets = budgets.map(
+                budget => budget.dataValues
+            ).filter(
+                budget => {
+                    if(budget.month == month && budget.year == year) 
+                        return budget
+                }
+            )
+            
+            return filteredBudgets
+        } catch (err) {
+            const error = new Error("Internal server error")
+            error.code = 500
+            throw error
+        }
     }
 }
 
