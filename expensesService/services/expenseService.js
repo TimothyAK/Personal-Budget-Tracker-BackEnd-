@@ -106,7 +106,28 @@ const expenseServices = {
             error.code = 500
             throw error
         }
-    }
+    },
+    getExpensePerMnYByUserId: async (userID, month, year) => {
+        try{
+            const expenses = await expenseDAO.findByUserId(userID)
+
+            const filteredExpenses = expenses.map(
+                expense => expense.dataValues
+            ).filter(
+                expense => {
+                    const expDate = new Date(expense.date)
+                    if(expDate.getMonth() + 1 == month && expDate.getFullYear() == year)
+                        return expense 
+                }
+            )
+
+            return filteredExpenses
+        } catch (err) {
+            const error = new Error("Internal server error")
+            error.code = 500
+            throw error
+        }
+    },
 }
 
 module.exports = expenseServices;
