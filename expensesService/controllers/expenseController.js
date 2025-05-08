@@ -27,6 +27,7 @@ const expenseController = {
         const expenseID = req.params.expenseID;
         if(isNaN(expenseID) || expenseID <= 0) {
             res.status(400).end("Invalid expense ID")
+            return
         }
 
         try {
@@ -42,6 +43,7 @@ const expenseController = {
         const userID = req.params.userID;
         if(isNaN(userID) || userID <= 0) {
             res.status(400).end("Invalid user ID")
+            return
         }
 
         try {
@@ -58,6 +60,7 @@ const expenseController = {
         const { description, amount, date } = req.body
         if(isNaN(expenseID) || expenseID <= 0) {
             res.status(400).end("Invalid expense ID")
+            return
         }
 
         if (
@@ -76,6 +79,21 @@ const expenseController = {
             res.status(200).end()
         } catch (err) {
             console.log(err.message)
+            res.status(err.code).end(err.message)
+        }
+    },
+    deleteExpense: async (req, res) => {
+        const expenseID = req.params.expenseID;
+        if(isNaN(expenseID) || expenseID <= 0) {
+            res.status(400).end("Invalid expenseID")
+            return
+        }
+
+        try {
+            await expenseService.deleteExpense(expenseID)
+
+            res.status(204).end()
+        } catch (err) {
             res.status(err.code).end(err.message)
         }
     }

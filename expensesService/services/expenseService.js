@@ -58,6 +58,24 @@ const expenseServices = {
             error.code = 500
             throw error
         }
+    },
+    deleteExpense: async (expenseID) => {
+        try {
+            const existingExpense = await expenseDAO.findById(expenseID);
+            if(!existingExpense) {
+                const error = new Error("Expense not found")
+                error.code = 404
+                throw error
+            }
+
+            return await expenseDAO.delete(expenseID);
+        } catch (err) {
+            if(err.code === 404) throw err
+
+            const error = new Error("Internal server error")
+            error.code = 500
+            throw error
+        }
     }
 }
 
