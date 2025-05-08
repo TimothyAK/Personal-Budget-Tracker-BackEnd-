@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 const expenseDAO = require("../repositories/expenseRepository");
 
 const expenseServices = {
@@ -128,6 +129,46 @@ const expenseServices = {
             throw error
         }
     },
+    expenseGroupByCategory: async (userID, month, year) => {
+        try {
+            const expenses = await expenseDAO.findByUserId(userID)
+
+            const userCategories_response = await axios.get(`http://localhost:3002/api/category/user/${userID}`)
+            const userCategories = Array.from(userCategories_response.data)
+
+            const groupedExpenses = {}
+
+            userCategories.forEach(
+                userCategory => {
+                    groupedExpenses[userCategory.categoryID] = 0
+                }
+            )
+
+            expenses.forEach(
+                expense => {
+                    groupedExpenses[expense.dataValues.categoryID] += parseFloat(expense.dataValues.amount)
+                }
+            )
+
+            const groupedExpensesWithNames = {}
+
+            userCategories.forEach(
+                userCategory => {
+                    if (groupedExpenses[userCategory.categoryID] !== undefined) {
+                        groupedExpensesWithNames[userCategory.name] = groupedExpenses[userCategory.categoryID]
+                    }
+                }
+            )
+
+            return groupedExpensesWithNames
+        } catch (err) {
+            console.log(err.message)
+
+            const error = new Error("Internal server error")
+            error.code = 500
+            throw error
+        }
+    }
 }
 
 module.exports = expenseServices;
