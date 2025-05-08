@@ -16,6 +16,7 @@ const budgetServices = {
             return await budgetDAO.create({ userID, amount, month, year })
         } catch (err) {
             if(err.code === 409) throw err;
+
             const error = new Error('Internal server error');
             error.code = 500;
             throw error;
@@ -74,6 +75,7 @@ const budgetServices = {
             return await budgetDAO.update(budgetID, updateData);
         } catch (err) {
             if(err.code === 404 || err.code === 409) throw err;
+
             const error = new Error('Internal server error');
             error.code = 500;
             throw error;
@@ -82,7 +84,7 @@ const budgetServices = {
 
     deleteBudget: async (budgetID) => {
         try {
-            const existingBudget = await budgetDAO.readById(budgetID);
+            const existingBudget = await budgetDAO.findById(budgetID);
             if (!existingBudget) {
                 const error = new Error('Budget not found');
                 error.code = 404;
@@ -91,6 +93,8 @@ const budgetServices = {
     
             return await budgetDAO.delete(budgetID);
         } catch (err) {
+            if(err.code === 404) throw err;
+
             const error = new Error('Internal server error');
             error.code = 500;
             throw error;
