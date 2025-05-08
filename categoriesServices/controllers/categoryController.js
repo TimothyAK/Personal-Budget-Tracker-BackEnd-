@@ -117,7 +117,30 @@ const categoryController = {
             console.log(err)
             res.status(err.code).end(err.message);
         }
-    }
+    },
+    deleteCategory: async (req, res) => {
+        const userID = req.params.userID;
+        const { categoryID } = req.body;
+
+        if (isNaN(userID) || userID <= 0) {
+            res.status(400).end("Invalid user ID");
+            return;
+        }
+
+        if (isNaN(categoryID) || categoryID <= 0) {
+            res.status(400).end("Invalid category ID");
+            return;
+        }
+
+        try {
+            await categoryService.deleteCategory(userID, categoryID);
+
+            res.status(200).end();
+        } catch (err) {
+            console.log(err)
+            res.status(err.code).end(err.message);
+        }
+    },
 }
 
 module.exports = categoryController;
