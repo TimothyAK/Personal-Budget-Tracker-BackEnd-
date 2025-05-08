@@ -112,13 +112,21 @@ const expenseServices = {
         try{
             const expenses = await expenseDAO.findByUserId(userID)
 
+            const userCategories_response = await axios.get(`http://localhost:3002/api/category/user/${userID}`)
+            const userCategories = Array.from(userCategories_response.data)
+
             const filteredExpenses = expenses.map(
                 expense => expense.dataValues
             ).filter(
                 expense => {
                     const expDate = new Date(expense.date)
                     if(expDate.getMonth() + 1 == month && expDate.getFullYear() == year)
-                        return expense 
+                        for (let i = 0; i < userCategories.length; i++) {
+                            if (userCategories[i].categoryID == expense.categoryID && userCategories[i].userID == userID) {
+                                expense.categoryName = userCategories[i].name
+                                return expense
+                            }
+                        }
                 }
             )
 
