@@ -1,9 +1,10 @@
-const CategoryDAO = require("../repositories/categoryRepository");
+const e = require("express");
+const categoryDAO = require("../repositories/categoryRepository");
 
 const categoryServices = {
     createCategory: async ({ userID, name }) => {
         try {
-            const categories = await CategoryDAO.findByUserId(userID);
+            const categories = await categoryDAO.findByUserId(userID);
             for (let category of categories) {
                 if (category.name === name) {
                     const error = new Error('Category already exists');
@@ -12,7 +13,7 @@ const categoryServices = {
                 }
             }
 
-            return await CategoryDAO.create({ 
+            return await categoryDAO.create({ 
                 userID: userID,
                 categoryID: categories.length + 1,
                 name: name,
@@ -29,7 +30,7 @@ const categoryServices = {
 
     getCategoryById: async (userID, categoryID) => {
         try {
-            const category = await CategoryDAO.findById(userID, categoryID);
+            const category = await categoryDAO.findById(userID, categoryID);
             if (!category) {
                 const error = new Error('Category not found');
                 error.code = 404;
@@ -50,25 +51,54 @@ const categoryServices = {
 
     getCategoriesByUserId: async (userID) => {
         try {
-            return await CategoryDAO.findByUserId(userID);
+            return await categoryDAO.findByUserId(userID);
         } catch (err) {
             const error = new Error('Internal server error');
             error.code = 500;
             throw error;
         }
     },
-
-    updateCategory: async (categoryID, updateData) => {
+    updateName: async (userID, categoryID, name) => {
         try {
-            const existingCategory = await CategoryDAO.findById(categoryID);
+            const existingCategory = await categoryDAO.findById(userID, categoryID);
             if (!existingCategory) {
                 const error = new Error('Category not found');
                 error.code = 404;
                 throw error;
             }
+    
+            const updateData = {
+                name: name,
+                colorHex: existingCategory.dataValues.colorHex,
+            }
 
-            return await CategoryDAO.update(categoryID, updateData);
+            return await categoryDAO.update(userID, categoryID, updateData);
         } catch (err) {
+            console.log(err)
+            if (err.code === 404) throw err;
+
+            const error = new Error('Internal server error');
+            error.code = 500;
+            throw error;
+        }
+    },
+    updateColorHex: async (userID, categoryID, colorHex) => {
+        try {
+            const existingCategory = await categoryDAO.findById(userID, categoryID);
+            if (!existingCategory) {
+                const error = new Error('Category not found');
+                error.code = 404;
+                throw error;
+            }
+    
+            const updateData = {
+                name: existingCategory.dataValues.name,
+                colorHex: colorHex,
+            }
+
+            return await categoryDAO.update(userID, categoryID, updateData);
+        } catch (err) {
+            console.log(err)
             if (err.code === 404) throw err;
 
             const error = new Error('Internal server error');
