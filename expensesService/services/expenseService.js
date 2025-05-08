@@ -27,6 +27,17 @@ const expenseServices = {
             error.code = 500
             throw error
         }
+    },
+    getExpenseByUserId: async (userID) => {
+        try{
+            const expenses = await expenseDAO.findByUserId(userID)
+
+            return expenses
+        } catch (err) {
+            const error = new Error("Internal server error")
+            error.code = 500
+            throw error
+        }
     }
 }
 
