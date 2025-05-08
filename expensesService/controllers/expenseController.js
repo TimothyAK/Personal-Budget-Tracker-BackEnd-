@@ -118,6 +118,27 @@ const expenseController = {
             console.log(err.message)
             res.status(err.code).end(err.message)
         }
+    },
+    getExpensePerMnYByUserId: async (req, res) => {
+        const { userID, month, year } = req.body;
+
+        if(
+            isNaN(userID) || userID <= 0 ||
+            isNaN(month) || month < 1 || month > 12 ||
+            isNaN(year) || year < 2000
+        ) {
+            res.status(400).end("Invalid request body")
+            return
+        }
+
+        try {
+            const expenses = await expenseService.getExpensePerMnYByUserId(userID, month, year)
+
+            res.send(expenses)
+            res.status(200).end()
+        } catch (err) {
+            res.status(err.code).end(err.message)
+        }
     }
 }
 
