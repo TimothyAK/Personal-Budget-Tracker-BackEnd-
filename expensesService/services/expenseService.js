@@ -76,6 +76,36 @@ const expenseServices = {
             error.code = 500
             throw error
         }
+    },
+    expenseSumPerMonth: async (userID, month, year) => {
+        try {
+            const expenses = await expenseDAO.findByUserId(userID);
+            if (!expenses) {
+                const error = new Error("No expenses found for this user")
+                error.code = 404
+                throw error
+            }
+
+            const sum = expenses.map(expense => expense.dataValues)
+            .reduce((total, expense) => {
+                const expDate = new Date(expense.date);
+                if (expDate.getMonth() + 1 == month && expDate.getFullYear() == year) {
+                    return total + parseFloat(expense.amount);
+                } else {
+                    return total;
+                }
+            }, 0);
+
+            return sum;
+        } catch (err) {
+            console.log(err.message)
+
+            if(err.code === 404) throw err
+
+            const error = new Error("Internal server error")
+            error.code = 500
+            throw error
+        }
     }
 }
 
