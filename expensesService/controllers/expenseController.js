@@ -38,6 +38,21 @@ const expenseController = {
         } catch (err) {
             res.status(err.code).end(err.message)
         }
+    },
+    getExpenseByUserId: async (req, res) => {
+        const userID = req.params.userID;
+        if(isNaN(userID) || userID <= 0) {
+            res.status(400).end("Invalid user ID")
+        }
+
+        try {
+            const expenses = await expenseService.getExpenseByUserId(userID)
+
+            res.send(expenses)
+            res.status(200).end()
+        } catch (err) {
+            res.status(err.code).end(err.message)
+        }
     }
 }
 
