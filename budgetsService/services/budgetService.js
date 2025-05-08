@@ -24,8 +24,17 @@ const budgetServices = {
 
     getBudgetById: async (budgetID) => {
         try {
-            return await budgetDAO.findById(budgetID)
-        } catch {
+            const budget = await budgetDAO.findById(budgetID)
+            if(!budget) {
+                const error = new Error('Budget not found');
+                error.code = 404;
+                throw error;
+            }
+
+            return budget
+        } catch (err) {
+            if(err.code === 404) throw err;
+
             const error = new Error('Internal server error');
             error.code = 500;
             throw error;

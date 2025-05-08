@@ -24,6 +24,23 @@ const budgetController = {
         } catch (err) {
             res.status(err.code).end(err.message)
         }
+    },
+    getBudgetById: async (req, res) => {
+        const budgetID = req.params.budgetID
+
+        if (isNaN(budgetID) || budgetID <= 0) {
+            res.status(400).end("Invalid budget ID");
+            return;
+        }
+
+        try {
+            const budget = await budgetService.getBudgetById(budgetID)
+            
+            res.send(budget)
+            res.status(200).end()
+        } catch (err) {
+            res.status(err.code).end(err.message)
+        }
     }
 }
 
