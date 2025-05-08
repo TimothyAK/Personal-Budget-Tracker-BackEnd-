@@ -20,6 +20,8 @@ const userService = {
         try {
             return await userDAO.create({ username, email, password: hashedPassword });
         } catch (err) {
+            if(err.code === 400) throw err;
+
             const error = new Error('Internal server error');
             error.code = 500;
             throw error;
@@ -48,6 +50,8 @@ const userService = {
             const { password: _, ...userSafe } = user.toJSON();
             return userSafe;
         } catch (err) {
+            if(err.code === 404 || err.code === 400) throw err;
+
             const error = new Error("Internal server error")
             error.code = 500;
             throw error;
@@ -68,16 +72,13 @@ const userService = {
             const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
 
             const updatedUser = await userDAO.update(user.userID, { password: hashedPassword });
-            if (!updatedUser) {
-                const error = new Error('Internal server error');
-                error.code = 500;
-                throw error;
-            }
 
             const { userID: _2, password: _, ...updatedValues } = updatedUser.dataValues
 
             return updatedValues;
         } catch (err) {
+            if(err.code === 404) throw err;
+
             const error = new Error('Internal server error');
             error.code = 500;
             throw error;
