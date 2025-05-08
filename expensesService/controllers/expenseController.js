@@ -1,11 +1,8 @@
-const { DATEONLY } = require("sequelize");
 const expenseService = require("../services/expenseService");
 
 const expenseController = {
     createExpense: async (req, res) => {
         const { description, amount, date, userID, categoryID } = req.body;
-
-        console.log(/^\d{4}-\d{2}-\d{2}$/.test(date))
 
         if (
             typeof description !== 'string' || description.trim() === '' ||
@@ -19,9 +16,11 @@ const expenseController = {
 
         try {
             const expense = await expenseService.createExpense({ description, amount, date, userID, categoryID });
-            return res.status(201).end(expense);
+
+            res.send(expense)
+            res.status(200).end();
         } catch (err) {
-            return res.status(err.code).end(err.message);
+            res.status(err.code).end(err.message);
         }
     },
     getExpenseById: async (req, res) => {
@@ -51,6 +50,32 @@ const expenseController = {
             res.send(expenses)
             res.status(200).end()
         } catch (err) {
+            res.status(err.code).end(err.message)
+        }
+    },
+    updateExpense: async (req, res) => {
+        const expenseID = req.params.expenseID;
+        const { description, amount, date } = req.body
+        if(isNaN(expenseID) || expenseID <= 0) {
+            res.status(400).end("Invalid expense ID")
+        }
+
+        if (
+            typeof description !== 'string' || description.trim() === '' ||
+            typeof amount !== 'number' || amount <= 0 ||
+            typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)
+        ) {
+            res.status(400).end("Invalid request body");
+            return;
+        }
+
+        try {
+            const updatedExpense = await expenseService.updateExpense(expenseID, { description, amount, date })
+
+            res.send(updatedExpense)
+            res.status(200).end()
+        } catch (err) {
+            console.log(err.message)
             res.status(err.code).end(err.message)
         }
     }

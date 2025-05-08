@@ -17,13 +17,8 @@ const expenseDAO = {
         });
     },
 
-    update: async (userID, expenseID, updateData) => {
-        const expense = await Expenses.findOne({
-            where: {
-                userID: userID,
-                expenseID: expenseID
-            }
-        });
+    update: async (expenseID, updateData) => {
+        const expense = await Expenses.findByPk(expenseID);
         if (!expense) return null;
         return await expense.update(updateData);
     },
