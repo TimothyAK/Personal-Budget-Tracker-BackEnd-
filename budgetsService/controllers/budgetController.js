@@ -41,6 +41,23 @@ const budgetController = {
         } catch (err) {
             res.status(err.code).end(err.message)
         }
+    },
+    getBudgetByUserId: async (req, res) => {
+        const userID = req.params.userID
+
+        if (isNaN(userID) || userID <= 0) {
+            res.status(400).end("Invalid user ID");
+            return;
+        }
+
+        try {
+            const budgets = await budgetService.getBudgetsByUserId(userID)
+            
+            res.send(budgets)
+            res.status(200).end()
+        } catch (err) {
+            res.status(err.code).end(err.message)
+        }
     }
 }
 
