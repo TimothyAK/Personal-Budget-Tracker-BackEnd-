@@ -3,7 +3,7 @@ const budgetController = require('../controllers/budgetController');
 
 const router = express.Router();
 
-router.get("/user/:userID", budgetController.getBudgetByUserId);
+router.get("/user/:userID/:page", budgetController.getBudgetByUserId);
 router.get("/:budgetID", budgetController.getBudgetById);
 router.post("", budgetController.createBudget);
 router.post("/check", budgetController.checkBudgetExpense);
