@@ -10,6 +10,24 @@ const expenseServices = {
             throw error;
         }
     },
+    getExpenseById: async (expenseID) => {
+        try {
+            const expense = await expenseDAO.findById(expenseID);
+            if(!expense) {
+                const error = new Error("Expense not found")
+                error.code = 404
+                throw error
+            }
+
+            return expense
+        } catch (err) {
+            if(err.code === 404) throw err
+
+            const error = new Error("Internal server error")
+            error.code = 500
+            throw error
+        }
+    }
 }
 
 module.exports = expenseServices;

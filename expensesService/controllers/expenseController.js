@@ -14,16 +14,31 @@ const expenseController = {
             typeof userID !== 'number' || userID <= 0 ||
             typeof categoryID !== 'number' || categoryID <= 0
         ) {
-            return res.status(400).json({ message: "Invalid request body" });
+            return res.status(400).end("Invalid request body" );
         }
 
         try {
             const expense = await expenseService.createExpense({ description, amount, date, userID, categoryID });
-            return res.status(201).json(expense);
+            return res.status(201).end(expense);
         } catch (err) {
-            return res.status(err.code || 500).json({ message: err.message });
+            return res.status(err.code).end(err.message);
         }
     },
+    getExpenseById: async (req, res) => {
+        const expenseID = req.params.expenseID;
+        if(isNaN(expenseID) || expenseID <= 0) {
+            res.status(400).end("Invalid expense ID")
+        }
+
+        try {
+            const expense = await expenseService.getExpenseById(expenseID)
+
+            res.send(expense)
+            res.status(200).end()
+        } catch (err) {
+            res.status(err.code).end(err.message)
+        }
+    }
 }
 
 module.exports = expenseController;
