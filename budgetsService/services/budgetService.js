@@ -53,15 +53,27 @@ const budgetServices = {
 
     updateBudget: async (budgetID, updateData) => {
         try {
-            const existingBudget = await budgetDAO.readById(budgetID);
+            const existingBudget = await budgetDAO.findById(budgetID);
             if (!existingBudget) {
                 const error = new Error('Budget not found');
                 error.code = 404;
                 throw error;
             }
+            
+            const budgets = await budgetDAO.findByUserId(existingBudget.dataValues.userID)
+            for(let budget of budgets) {
+                if (budget.month === updateData.month && budget.year === updateData.year) {
+                    const error = new Error('Budget already exists for this month and year');
+                    error.code = 409;
+                    throw error;
+                }
+            }
+
+            updateData.userID = existingBudget.dataValues.userID;
     
             return await budgetDAO.update(budgetID, updateData);
         } catch (err) {
+            if(err.code === 404 || err.code === 409) throw err;
             const error = new Error('Internal server error');
             error.code = 500;
             throw error;
