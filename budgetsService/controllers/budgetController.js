@@ -43,17 +43,24 @@ const budgetController = {
         }
     },
     getBudgetByUserId: async (req, res) => {
-        const userID = req.params.userID
+        const { userID, page } = req.params
 
-        if (isNaN(userID) || userID <= 0) {
-            res.status(400).end("Invalid user ID");
+        if (
+            isNaN(userID) || userID <= 0 || 
+            isNaN(page) || page <= 0
+        ) {
+            res.status(400).end("Invalid request parameters");
             return;
         }
 
         try {
-            const budgets = await budgetService.getBudgetsByUserId(userID)
+            const budget = await budgetService.getBudgetsByUserId(userID)
             
-            res.send(budgets)
+            const pageSize = 10
+            const startIndex = (page - 1) * pageSize
+            const paginatedBudget = budget.slice(startIndex, startIndex + pageSize)
+
+            res.send(paginatedBudget)
             res.status(200).end()
         } catch (err) {
             res.status(err.code).end(err.message)

@@ -120,7 +120,13 @@ const expenseController = {
         }
     },
     getExpensePerMnYByUserId: async (req, res) => {
+        const page = req.params.page 
         const { userID, month, year } = req.body;
+
+        if(isNaN(page) || page <= 0) {
+            res.status(400).end("Invalid page number")
+            return
+        }
 
         if(
             isNaN(userID) || userID <= 0 ||
@@ -134,7 +140,11 @@ const expenseController = {
         try {
             const expenses = await expenseService.getExpensePerMnYByUserId(userID, month, year)
 
-            res.send(expenses)
+            const pageSize = 10;
+            const startIndex = (page - 1) * pageSize;
+            const paginatedExpenses = expenses.slice(startIndex, startIndex + pageSize);
+
+            res.send(paginatedExpenses)
             res.status(200).end()
         } catch (err) {
             res.status(err.code).end(err.message)
