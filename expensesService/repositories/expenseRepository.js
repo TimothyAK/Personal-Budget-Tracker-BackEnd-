@@ -1,0 +1,44 @@
+const Expenses = require("../models/expense.js")
+
+const expenseDAO = {
+    create: async (expenseData) => {
+        return await Expenses.create(expenseData);
+    },
+
+    findById: async (expenseID) => {
+        return await Expenses.findByPk(expenseID);
+    },
+
+    findByUserId: async (userID) => {
+        return await Expenses.findAll({
+            where: {
+                userID: userID
+            }
+        });
+    },
+
+    update: async (userID, expenseID, updateData) => {
+        const expense = await Expenses.findOne({
+            where: {
+                userID: userID,
+                expenseID: expenseID
+            }
+        });
+        if (!expense) return null;
+        return await expense.update(updateData);
+    },
+
+    delete: async (userID, expenseID) => {
+        const expense = await Expenses.findOne({
+            where: {
+                userID: userID,
+                expenseID: expenseID
+            }
+        });
+        if (!expense) return null;
+        await expense.destroy();
+        return true;
+    }
+}
+
+module.exports = expenseDAO;
