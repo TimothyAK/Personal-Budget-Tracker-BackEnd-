@@ -5,6 +5,6 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/api', categoryRouter);
+app.use('/api/category', categoryRouter);
 
 app.listen(3002, () => console.log('Service running in port 3002'));
