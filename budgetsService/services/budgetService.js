@@ -105,7 +105,7 @@ const budgetServices = {
 
     checkBudgetExpense: async (userID, month, year) => {
         try {
-            const expenses_sum_response = await axios.post(`http://localhost:3003/api/expense/sum`, {
+            const expenses_sum_response = await axios.post(`http://localhost:3003/api/expense/mny/sum`, {
                 userID, month, year
             })
             const expenses_sum = expenses_sum_response.data
@@ -114,8 +114,6 @@ const budgetServices = {
             const bF = budgets
                 .filter(budget => budget.month === month && budget.year === year)
                 .map(budget => parseFloat(budget.dataValues.amount))
-
-            console.log(expenses_sum, bF[0])
         
             const expBudRatio = expenses_sum / bF[0]
 
