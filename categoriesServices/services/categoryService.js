@@ -105,7 +105,25 @@ const categoryServices = {
             error.code = 500;
             throw error;
         }
-    }
+    },
+    deleteCategory: async (userID, categoryID) => {
+        try {
+            const existingCategory = await categoryDAO.findById(userID, categoryID);
+            if (!existingCategory) {
+                const error = new Error('Category not found');
+                error.code = 404;
+                throw error;
+            }
+
+            return await categoryDAO.delete(userID, categoryID);
+        } catch (err) {
+            if (err.code === 404) throw err;
+
+            const error = new Error('Internal server error');
+            error.code = 500;
+            throw error;
+        }
+    },
 }
 
 module.exports = categoryServices;
