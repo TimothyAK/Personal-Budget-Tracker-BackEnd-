@@ -6,7 +6,7 @@ const categoryDAO = {
     },
 
     findById: async (userID, categoryID) => {
-        return await Categories.find({
+        return await Categories.findOne({
             where: {
                 userID: userID,
                 categoryID: categoryID

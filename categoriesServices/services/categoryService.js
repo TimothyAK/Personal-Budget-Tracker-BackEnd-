@@ -20,16 +20,16 @@ const categoryServices = {
             });
         } catch (err) {
             if (err.code === 409) throw err;
-            
+
             const error = new Error('Internal server error');
             error.code = 500;
             throw error;
         }
     },
 
-    getCategoryById: async (categoryID) => {
+    getCategoryById: async (userID, categoryID) => {
         try {
-            const category = await CategoryDAO.findById(categoryID);
+            const category = await CategoryDAO.findById(userID, categoryID);
             if (!category) {
                 const error = new Error('Category not found');
                 error.code = 404;
@@ -39,6 +39,8 @@ const categoryServices = {
             return category;
         } catch (err) {
             if (err.code === 404) throw err;
+
+            console.log(err.message)
 
             const error = new Error('Internal server error');
             error.code = 500;
