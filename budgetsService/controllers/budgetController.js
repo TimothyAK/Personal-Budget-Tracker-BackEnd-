@@ -58,6 +58,33 @@ const budgetController = {
         } catch (err) {
             res.status(err.code).end(err.message)
         }
+    },
+    updateBudget: async (req, res) => {
+        const budgetID = req.params.budgetID
+        const { amount, month, year } = req.body
+
+        if (isNaN(budgetID) || budgetID <= 0) {
+            res.status(400).end("Invalid budget ID");
+            return;
+        }
+
+        if (
+            typeof amount !== 'number' || amount <= 0 ||
+            typeof month !== 'number' || month < 1 || month > 12 ||
+            typeof year !== 'number' || year < 2000
+        ) {
+            res.status(400).end("Invalid request body");
+            return;
+        }
+
+        try {
+            const updatedBudget = await budgetService.updateBudget(budgetID, { amount, month, year })
+            
+            res.send(updatedBudget)
+            res.status(200).end()
+        } catch (err) {
+            res.status(err.code).end(err.message)
+        }
     }
 }
 
