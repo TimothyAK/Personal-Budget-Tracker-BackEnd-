@@ -6,6 +6,7 @@ const router = express.Router();
 router.get("/:budgetID", budgetController.getBudgetById);
 router.get("/user/:userID", budgetController.getBudgetByUserId);
 router.post("", budgetController.createBudget);
+router.post("/check", budgetController.checkBudgetExpense);
 router.put("/:budgetID", budgetController.updateBudget);
 router.delete("/:budgetID", budgetController.deleteBudget);
 
