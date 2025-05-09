@@ -50,7 +50,6 @@ const expenseServices = {
             }
 
             updateData.userID = existingExpense.dataValues.userID
-            updateData.categoryID = existingExpense.dataValues.categoryID
 
             return await expenseDAO.update(expenseID, updateData)
         } catch (err) {
