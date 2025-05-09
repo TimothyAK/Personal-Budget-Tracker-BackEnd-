@@ -60,7 +60,11 @@ const budgetController = {
             const startIndex = (page - 1) * pageSize
             const paginatedBudget = budget.slice(startIndex, startIndex + pageSize)
 
-            res.send(paginatedBudget)
+            res.send({
+                totalPages: Math.ceil(budget.length / pageSize),
+                currentPage: page,
+                budgets: paginatedBudget
+            })
             res.status(200).end()
         } catch (err) {
             res.status(err.code).end(err.message)
